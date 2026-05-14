@@ -154,6 +154,24 @@ def extract_all_tables_ocr(pdf_path):
 
 # ---------- MAIN ----------
 def main():
+import os
+import sys
+import pytesseract
+
+def get_resource_path(relative_path):
+    """ Возвращает абсолютный путь к ресурсам внутри EXE или в обычной папке """
+    if hasattr(sys, '_MEIPASS'):
+        # Путь к временной папке, куда PyInstaller распаковал файлы
+        return os.path.join(sys._MEIPASS, relative_path)
+    return os.path.join(os.path.abspath("."), relative_path)
+
+# 1. Корректно инициализируем Tesseract
+tesseract_dir = get_resource_path("tesseract_portable")
+pytesseract.pytesseract.tesseract_cmd = os.path.join(tesseract_dir, "tesseract.exe")
+
+# 2. Корректно инициализируем Poppler (используйте эту переменную при конвертации PDF)
+poppler_bin_dir = os.path.join(get_resource_path("poppler_portable"), "Library", "bin")
+    
     input_dir = Path("input_pdfs")
     output_dir = Path(OUTPUT_DIR)
     output_dir.mkdir(exist_ok=True)
