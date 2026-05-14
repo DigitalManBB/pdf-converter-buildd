@@ -23,10 +23,10 @@ jobs:
       
       - name: Download Tesseract portable
         run: |
-          # Скачиваем и распаковываем в папку tesseract_portable
-          curl -L -o tesseract.zip https://github.com/tesseract-ocr/tesseract/releases/download/5.1.0/tesseract-ocr-w64-setup-v5.1.0.20220510.exe
+          curl -L -o tesseract.zip https://github.com/UB-Mannheim/tesseract/releases/download/v5.1.0/tesseract-ocr-w64-setup-v5.1.0.20220510-portable.zip
           mkdir tesseract_portable
           7z x tesseract.zip -otesseract_portable -y
+        shell: cmd
       
       - name: Download Poppler portable
         run: |
