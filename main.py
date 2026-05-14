@@ -12,34 +12,22 @@ from openpyxl import Workbook
 from openpyxl.utils import get_column_letter
 from openpyxl.styles import Alignment
 
-import sys
-import os
+import sys, os
 
-def find_tesseract_exe(base_dir):
-    """Находит tesseract.exe в папке portable-версии."""
-    for root, dirs, files in os.walk(base_dir):
-        if 'tesseract.exe' in files:
-            return os.path.join(root, 'tesseract.exe')
-    return None
+from pytesseract import pytesseract
 
+if getattr(sys, 'frozen', False):
+    base_dir = sys._MEIPASS
+else:
+    base_dir = os.path.dirname(__file__)
 
-def resource_path(relative_path):
-    """Получает абсолютный путь к ресурсу, работает и для dev, и для PyInstaller."""
-    try:
-        # PyInstaller создает временную папку и хранит путь в _MEIPASS
-        base_path = sys._MEIPASS
-    except Exception:
-        base_path = os.path.abspath(".")
-    return os.path.join(base_path, relative_path)
+tesseract_path = os.path.join(base_dir, 'Tesseract-OCR', 'tesseract.exe')
+if os.path.exists(tesseract_path):
+    pytesseract.pytesseract.tesseract_cmd = tesseract_path
 
-# Указываем программе, где лежат её инструменты
-tesseract_exe = find_tesseract_exe(resource_path('tesseract_portable'))
-if os.path.exists(tesseract_exe):
-    pytesseract.pytesseract.tesseract_cmd = tesseract_exe
-
-poppler_bin = resource_path(os.path.join('poppler_portable', 'Library', 'bin'))
-if os.path.exists(poppler_bin):
-    os.environ['PATH'] = poppler_bin + ';' + os.environ.get('PATH', '')
+poppler_path = os.path.join(base_dir, 'poppler', 'Library', 'bin')
+if os.path.exists(poppler_path):
+    os.environ['PATH'] = poppler_path + ';' + os.environ.get('PATH', '')
 
 OUTPUT_DIR = "output_new"
 DPI = 300
@@ -169,6 +157,25 @@ def main():
     input_dir = Path("input_pdfs")
     output_dir = Path(OUTPUT_DIR)
     output_dir.mkdir(exist_ok=True)
+
+    import sys, os
+
+    if getattr(sys, 'frozen', False):
+        base_dir = sys._MEIPASS
+    else:
+        base_dir = os.path.dirname(__file__)
+
+    # Ищем tesseract.exe
+    tesseract_dir = os.path.join(base_dir, 'tesseract_portable')
+    for root, dirs, files in os.walk(tesseract_dir):
+        if 'tesseract.exe' in files:
+            pytesseract.pytesseract.tesseract_cmd = os.path.join(root, 'tesseract.exe')
+            break
+
+    # Добавляем Poppler в PATH
+    poppler_bin = os.path.join(base_dir, 'poppler_portable', 'Library', 'bin')
+    if os.path.exists(poppler_bin):
+        os.environ['PATH'] = poppler_bin + ';' + os.environ.get('PATH', '')
 
     for pdf_path in input_dir.glob("*.pdf"):
         logger.info(f"Обработка: {pdf_path.name}")
