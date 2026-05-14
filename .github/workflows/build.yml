@@ -23,7 +23,7 @@ jobs:
       
       - name: Download Tesseract portable
         run: |
-          curl -L -o tesseract.zip https://github.com/UB-Mannheim/tesseract
+          curl -L -o tesseract-setup.exe uni-mannheim.de
           mkdir tesseract_portable
           7z x tesseract.zip -otesseract_portable -y
         shell: cmd
