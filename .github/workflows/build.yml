@@ -1,0 +1,46 @@
+name: Build EXE with binaries
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+      
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pyinstaller setuptools
+      
+      - name: Download Tesseract portable
+        run: |
+          curl -L -o tesseract.zip https://github.com/tesseract-ocr/tesseract/releases/download/5.1.0/tesseract-ocr-w64-setup-v5.1.0.20220510.exe
+          mkdir binaries\tesseract
+          7z x tesseract.zip -obinaries\tesseract -y
+        shell: cmd
+      
+      - name: Download Poppler portable
+        run: |
+          curl -L -o poppler.zip https://github.com/oschwartz10612/poppler-windows/releases/download/v24.08.0-0/Release-24.08.0-0.zip
+          mkdir binaries\poppler
+          7z x poppler.zip -obinaries\poppler -y
+        shell: cmd
+      
+      - name: Build EXE
+        run: |
+          pyinstaller --onefile --name PDFtoExcel --add-data "binaries;binaries" main.py
+      
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: PDFtoExcel
+          path: dist/PDFtoExcel.exe
