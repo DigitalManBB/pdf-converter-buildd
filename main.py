@@ -15,6 +15,14 @@ from openpyxl.styles import Alignment
 import sys
 import os
 
+def find_tesseract_exe(base_dir):
+    """Находит tesseract.exe в папке portable-версии."""
+    for root, dirs, files in os.walk(base_dir):
+        if 'tesseract.exe' in files:
+            return os.path.join(root, 'tesseract.exe')
+    return None
+
+
 def resource_path(relative_path):
     """Получает абсолютный путь к ресурсу, работает и для dev, и для PyInstaller."""
     try:
