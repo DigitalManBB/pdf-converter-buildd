@@ -23,7 +23,7 @@ jobs:
       
       - name: Download Tesseract portable
         run: |
-          curl -L -o tesseract.zip https://github.com/UB-Mannheim/tesseract/releases/download/v5.1.0/tesseract-ocr-w64-setup-v5.1.0.20220510-portable.zip
+          curl -L -o tesseract.zip https://github.com/UB-Mannheim/tesseract
           mkdir tesseract_portable
           7z x tesseract.zip -otesseract_portable -y
         shell: cmd
