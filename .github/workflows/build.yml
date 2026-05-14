@@ -21,12 +21,17 @@ jobs:
           pip install -r requirements.txt
           pip install pyinstaller
       
-      - name: Download Tesseract portable
+      - name: Download and Install Tesseract portable
         run: |
-          curl -L -o tesseract-setup.exe uni-mannheim.de
+          # 1. Создаем папку внутри репозитория для переносимой версии
           mkdir tesseract_portable
-          7z x tesseract.zip -otesseract_portable -y
-        shell: cmd
+          
+          # 2. Устанавливаем Tesseract скрытно прямо в созданную папку
+          winget install --id UB-Mannheim.TesseractOCR --silent --accept-source-agreements --accept-package-agreements --location "D:\a\PDFtoExcel\PDFtoExcel\tesseract_portable"
+          
+          # 3. Проверяем, что исполняемый файл появился в нужной директории
+          dir tesseract_portable
+        shell: powershell
       
       - name: Download Poppler portable
         run: |
