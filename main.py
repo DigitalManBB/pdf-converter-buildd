@@ -12,22 +12,26 @@ from openpyxl import Workbook
 from openpyxl.utils import get_column_letter
 from openpyxl.styles import Alignment
 
-import sys, os
+import sys
+import os
 
-from pytesseract import pytesseract
+def resource_path(relative_path):
+    """Получает абсолютный путь к ресурсу, работает и для dev, и для PyInstaller."""
+    try:
+        # PyInstaller создает временную папку и хранит путь в _MEIPASS
+        base_path = sys._MEIPASS
+    except Exception:
+        base_path = os.path.abspath(".")
+    return os.path.join(base_path, relative_path)
 
-if getattr(sys, 'frozen', False):
-    base_dir = sys._MEIPASS
-else:
-    base_dir = os.path.dirname(__file__)
+# Указываем программе, где лежат её инструменты
+tesseract_exe = resource_path(os.path.join('tesseract_portable', 'tesseract.exe'))
+if os.path.exists(tesseract_exe):
+    pytesseract.pytesseract.tesseract_cmd = tesseract_exe
 
-tesseract_path = os.path.join(base_dir, 'Tesseract-OCR', 'tesseract.exe')
-if os.path.exists(tesseract_path):
-    pytesseract.pytesseract.tesseract_cmd = tesseract_path
-
-poppler_path = os.path.join(base_dir, 'poppler', 'Library', 'bin')
-if os.path.exists(poppler_path):
-    os.environ['PATH'] = poppler_path + ';' + os.environ.get('PATH', '')
+poppler_bin = resource_path(os.path.join('poppler_portable', 'Library', 'bin'))
+if os.path.exists(poppler_bin):
+    os.environ['PATH'] = poppler_bin + ';' + os.environ.get('PATH', '')
 
 OUTPUT_DIR = "output_new"
 DPI = 300
