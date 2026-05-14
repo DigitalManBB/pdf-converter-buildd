@@ -33,7 +33,7 @@ def resource_path(relative_path):
     return os.path.join(base_path, relative_path)
 
 # Указываем программе, где лежат её инструменты
-tesseract_exe = resource_path(os.path.join('tesseract_portable', 'tesseract.exe'))
+tesseract_exe = find_tesseract_exe(resource_path('tesseract_portable'))
 if os.path.exists(tesseract_exe):
     pytesseract.pytesseract.tesseract_cmd = tesseract_exe
 
